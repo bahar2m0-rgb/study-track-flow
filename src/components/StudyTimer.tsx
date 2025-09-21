@@ -6,7 +6,7 @@ import { Play, Pause, Square, RotateCcw } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 const StudyTimer = () => {
-  const [timeLeft, setTimeLeft] = useState(25 * 60); // 25 minutes in seconds
+  const [studyTime, setStudyTime] = useState(0); // Current session time in seconds
   const [isRunning, setIsRunning] = useState(false);
   const [selectedSubject, setSelectedSubject] = useState("");
   const [studySessions, setStudySessions] = useState(0);
@@ -48,20 +48,7 @@ const StudyTimer = () => {
     
     setIsRunning(true);
     intervalRef.current = setInterval(() => {
-      setTimeLeft((prev) => {
-        if (prev <= 1) {
-          setIsRunning(false);
-          setStudySessions(sessions => sessions + 1);
-          setTotalStudyTime(total => total + (25 * 60 - prev));
-          toast({
-            title: "تبریک! 🎉",
-            description: "یک جلسه مطالعه با موفقیت تمام شد",
-            className: "celebrate",
-          });
-          return 25 * 60;
-        }
-        return prev - 1;
-      });
+      setStudyTime((prev) => prev + 1);
     }, 1000);
   };
 
@@ -74,16 +61,17 @@ const StudyTimer = () => {
 
   const resetTimer = () => {
     setIsRunning(false);
-    setTimeLeft(25 * 60);
+    setStudyTime(0);
     if (intervalRef.current) {
       clearInterval(intervalRef.current);
     }
   };
 
   const stopTimer = () => {
-    const studiedTime = (25 * 60) - timeLeft;
+    const studiedTime = studyTime;
     if (studiedTime > 60) { // Only count if studied more than 1 minute
       setTotalStudyTime(total => total + studiedTime);
+      setStudySessions(sessions => sessions + 1);
       toast({
         title: "زمان مطالعه ثبت شد",
         description: `${Math.floor(studiedTime / 60)} دقیقه برای درس ${selectedSubject} ثبت شد`,
@@ -100,7 +88,8 @@ const StudyTimer = () => {
     };
   }, []);
 
-  const progress = ((25 * 60 - timeLeft) / (25 * 60)) * 100;
+  // Show pulse animation when timer is running
+  const progress = isRunning ? 50 : 0;
 
   return (
     <div className="max-w-4xl mx-auto space-y-6">
@@ -111,7 +100,7 @@ const StudyTimer = () => {
             تایمر مطالعه
           </CardTitle>
           <CardDescription className="text-lg">
-            تکنیک پومودورو برای تمرکز بهتر
+            کرنومتر ساده برای ثبت زمان مطالعه
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-8">
@@ -160,7 +149,7 @@ const StudyTimer = () => {
               <div className="absolute inset-0 flex items-center justify-center">
                 <div className="text-center">
                   <div className="text-4xl font-bold font-mono persian-numbers">
-                    {formatTime(timeLeft)}
+                    {formatTime(studyTime)}
                   </div>
                   {selectedSubject && (
                     <div className="text-sm text-muted-foreground mt-1">
