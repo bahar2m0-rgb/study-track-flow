@@ -88,7 +88,7 @@ const StudyTimer = () => {
     };
   }, []);
 
-  // Show pulse animation when timer is running
+  // Calculate progress for visual effect
   const progress = isRunning ? 50 : 0;
 
   return (
@@ -97,10 +97,10 @@ const StudyTimer = () => {
       <Card className="shadow-medium border-0">
         <CardHeader className="text-center">
           <CardTitle className="text-3xl font-bold bg-gradient-primary bg-clip-text text-transparent">
-            تایمر مطالعه
+            کرنومتر مطالعه
           </CardTitle>
           <CardDescription className="text-lg">
-            کرنومتر ساده برای ثبت زمان مطالعه
+            زمان مطالعه خود را ثبت کنید
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-8">
@@ -143,7 +143,7 @@ const StudyTimer = () => {
                   fill="none"
                   strokeDasharray="283"
                   strokeDashoffset={283 - (283 * progress) / 100}
-                  className="text-primary transition-all duration-1000 ease-linear"
+                  className={`text-primary transition-all duration-1000 ease-linear ${isRunning ? 'animate-pulse' : ''}`}
                 />
               </svg>
               <div className="absolute inset-0 flex items-center justify-center">
